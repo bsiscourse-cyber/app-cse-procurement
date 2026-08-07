@@ -9,6 +9,7 @@ import {
 
 const MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','decm'];
 const MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL_LABELS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 const fmt = (amt) =>
   new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 2 }).format(amt || 0);
@@ -289,29 +290,26 @@ const ConsolidatedView = () => {
                 <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.84rem' }}>
                   <thead className="table-dark">
                     <tr>
-                      <th className="py-3 px-3" style={{ minWidth: '55px' }}>No</th>
+                      <th className="py-3 px-3 text-center" style={{ minWidth: '50px' }}>No</th>
                       <th className="py-3 px-3" style={{ minWidth: '100px' }}>Code</th>
                       <th className="py-3 px-3" style={{ minWidth: '240px' }}>Description / Specification</th>
-                      <th className="py-3 px-3 text-center" style={{ minWidth: '65px' }}>Unit</th>
+                      <th className="py-3 px-3 text-center" style={{ minWidth: '60px' }}>Unit</th>
                       <th className="py-3 px-3 text-end" style={{ minWidth: '90px' }}>Unit Price</th>
-                      {showMonths && MONTHS.map((m, idx) => (
-                        <th key={m} className="py-3 px-1 text-center" style={{ minWidth: '40px', fontSize: '0.7rem', opacity: 0.85 }}>
+                      {MONTHS.map((m, idx) => (
+                        <th key={m} className="py-3 px-1 text-center" title={`Month: ${MONTH_FULL_LABELS[idx]}`} style={{ minWidth: '38px', fontSize: '0.72rem', color: '#93c5fd' }}>
                           {MONTH_LABELS[idx]}
                         </th>
                       ))}
-                      <th className="py-3 px-3 text-center" style={{ minWidth: '80px' }}>
-                        Total Qty
-                        {!showMonths && <><br /><span style={{ fontSize: '0.65rem', opacity: 0.7 }}>All Offices</span></>}
-                      </th>
-                      <th className="py-3 px-3 text-end" style={{ minWidth: '120px' }}>Total Amount</th>
-                      {!showMonths && <th className="py-3 px-3 text-center" style={{ minWidth: '75px' }}>Offices</th>}
+                      <th className="py-3 px-3 text-center" style={{ minWidth: '75px' }}>Total Qty</th>
+                      <th className="py-3 px-3 text-end" style={{ minWidth: '110px' }}>Total Amount</th>
+                      {selectedOfficeId === 'ALL' && <th className="py-3 px-3 text-center" style={{ minWidth: '65px' }}>Offices</th>}
                     </tr>
                   </thead>
                   <tbody>
                     {cats.map(cat => (
                       <React.Fragment key={cat}>
                         <tr>
-                          <td colSpan={showMonths ? (5 + 12 + 2) : 8}
+                          <td colSpan={selectedOfficeId === 'ALL' ? 20 : 19}
                             style={{
                               background: 'linear-gradient(90deg,#1e293b,#334155)',
                               color: '#ffffff',
@@ -337,14 +335,36 @@ const ConsolidatedView = () => {
                               <td className="px-3 fw-semibold text-dark">{item.specification}</td>
                               <td className="px-3 text-center text-secondary small">{item.unit}</td>
                               <td className="px-3 text-end fw-medium" style={{ fontFamily: 'monospace' }}>{fmt(item.unitPrice)}</td>
-                              {showMonths && MONTHS.map(m => (
-                                <td key={m} className="px-1 text-center" style={{ fontSize: '0.78rem', color: (months[m] || 0) > 0 ? '#1d4ed8' : '#cbd5e1' }}>
-                                  {(months[m] || 0) > 0 ? <strong>{months[m]}</strong> : <span style={{ opacity: 0.3 }}>—</span>}
-                                </td>
-                              ))}
+                              {MONTHS.map((m, idx) => {
+                                const val = months[m] || 0;
+                                const monthName = MONTH_FULL_LABELS[idx];
+                                return (
+                                  <td
+                                    key={m}
+                                    className="px-1 text-center align-middle"
+                                    title={`Month: ${monthName} — Qty: ${val}`}
+                                    style={{
+                                      fontSize: '0.8rem',
+                                      cursor: 'pointer',
+                                      background: val > 0 ? 'rgba(37, 99, 235, 0.04)' : 'transparent'
+                                    }}
+                                  >
+                                    {val > 0 ? (
+                                      <span
+                                        className="badge bg-primary-subtle text-primary border border-primary-subtle px-1.5 py-1 rounded-2"
+                                        style={{ fontSize: '0.76rem', fontWeight: '700' }}
+                                      >
+                                        {val}
+                                      </span>
+                                    ) : (
+                                      <span style={{ opacity: 0.25 }}>—</span>
+                                    )}
+                                  </td>
+                                );
+                              })}
                               <td className="px-3 text-center fw-bold text-primary" style={{ fontFamily: 'monospace' }}>{qty}</td>
                               <td className="px-3 text-end fw-bold" style={{ color: '#059669', fontFamily: 'monospace' }}>{fmt(amount)}</td>
-                              {!showMonths && (
+                              {selectedOfficeId === 'ALL' && (
                                 <td className="px-3 text-center">
                                   <span className="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill" style={{ fontSize: '0.75rem' }}>
                                     {officeCount}

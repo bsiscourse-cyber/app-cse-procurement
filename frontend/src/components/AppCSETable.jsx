@@ -298,33 +298,33 @@ const AppCSETable = ({ items, entriesMap, setEntriesMap, part, readOnly, onlyWit
                       <td className="text-center text-secondary small">{item.unit}</td>
 
                       {/* Jan, Feb, Mar */}
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={jan || ''} onChange={(e) => handleQtyChange(item.id, 'jan', e.target.value)} /></td>
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={feb || ''} onChange={(e) => handleQtyChange(item.id, 'feb', e.target.value)} /></td>
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={mar || ''} onChange={(e) => handleQtyChange(item.id, 'mar', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: January — Qty: ${jan}`} disabled={readOnly} className="qty-input" value={jan || ''} onChange={(e) => handleQtyChange(item.id, 'jan', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: February — Qty: ${feb}`} disabled={readOnly} className="qty-input" value={feb || ''} onChange={(e) => handleQtyChange(item.id, 'feb', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: March — Qty: ${mar}`} disabled={readOnly} className="qty-input" value={mar || ''} onChange={(e) => handleQtyChange(item.id, 'mar', e.target.value)} /></td>
                       {/* Q1 Auto */}
                       <td className="auto-calc text-center">{q1Qty}</td>
                       <td className="auto-calc">{formatCurrency(q1Amount)}</td>
 
                       {/* Apr, May, Jun */}
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={apr || ''} onChange={(e) => handleQtyChange(item.id, 'apr', e.target.value)} /></td>
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={may || ''} onChange={(e) => handleQtyChange(item.id, 'may', e.target.value)} /></td>
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={jun || ''} onChange={(e) => handleQtyChange(item.id, 'jun', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: April — Qty: ${apr}`} disabled={readOnly} className="qty-input" value={apr || ''} onChange={(e) => handleQtyChange(item.id, 'apr', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: May — Qty: ${may}`} disabled={readOnly} className="qty-input" value={may || ''} onChange={(e) => handleQtyChange(item.id, 'may', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: June — Qty: ${jun}`} disabled={readOnly} className="qty-input" value={jun || ''} onChange={(e) => handleQtyChange(item.id, 'jun', e.target.value)} /></td>
                       {/* Q2 Auto */}
                       <td className="auto-calc text-center">{q2Qty}</td>
                       <td className="auto-calc">{formatCurrency(q2Amount)}</td>
 
                       {/* Jul, Aug, Sep */}
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={jul || ''} onChange={(e) => handleQtyChange(item.id, 'jul', e.target.value)} /></td>
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={aug || ''} onChange={(e) => handleQtyChange(item.id, 'aug', e.target.value)} /></td>
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={sep || ''} onChange={(e) => handleQtyChange(item.id, 'sep', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: July — Qty: ${jul}`} disabled={readOnly} className="qty-input" value={jul || ''} onChange={(e) => handleQtyChange(item.id, 'jul', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: August — Qty: ${aug}`} disabled={readOnly} className="qty-input" value={aug || ''} onChange={(e) => handleQtyChange(item.id, 'aug', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: September — Qty: ${sep}`} disabled={readOnly} className="qty-input" value={sep || ''} onChange={(e) => handleQtyChange(item.id, 'sep', e.target.value)} /></td>
                       {/* Q3 Auto */}
                       <td className="auto-calc text-center">{q3Qty}</td>
                       <td className="auto-calc">{formatCurrency(q3Amount)}</td>
 
                       {/* Oct, Nov, Dec */}
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={oct || ''} onChange={(e) => handleQtyChange(item.id, 'oct', e.target.value)} /></td>
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={nov || ''} onChange={(e) => handleQtyChange(item.id, 'nov', e.target.value)} /></td>
-                      <td className="text-center"><input type="number" min="0" disabled={readOnly} className="qty-input" value={decm || ''} onChange={(e) => handleQtyChange(item.id, 'decm', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: October — Qty: ${oct}`} disabled={readOnly} className="qty-input" value={oct || ''} onChange={(e) => handleQtyChange(item.id, 'oct', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: November — Qty: ${nov}`} disabled={readOnly} className="qty-input" value={nov || ''} onChange={(e) => handleQtyChange(item.id, 'nov', e.target.value)} /></td>
+                      <td className="text-center"><input type="number" min="0" title={`Month: December — Qty: ${decm}`} disabled={readOnly} className="qty-input" value={decm || ''} onChange={(e) => handleQtyChange(item.id, 'decm', e.target.value)} /></td>
                       {/* Q4 Auto */}
                       <td className="auto-calc text-center">{q4Qty}</td>
                       <td className="auto-calc">{formatCurrency(q4Amount)}</td>
