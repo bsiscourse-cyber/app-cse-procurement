@@ -1,0 +1,179 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+:root {
+  --primary-color: #0f172a;
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --card-bg: #ffffff;
+  --text-main: #334155;
+  --excel-header-bg: #1e293b;
+  --excel-category-bg: #e2e8f0;
+  --excel-auto-bg: #fef08a; /* Yellow highlight for auto-computed cells like Excel */
+  --excel-auto-text: #854d0e;
+  --border-color: #cbd5e1;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  color: var(--text-main);
+  overscroll-behavior: contain;
+}
+
+/* Modal Scroll Containment & Sharp Non-Curved Modals */
+.position-fixed[style*="2050"],
+.position-fixed[style*="1050"],
+.position-fixed[style*="2000"],
+.modal-overlay,
+.modal-dialog,
+.modal-content,
+.card-body.overflow-auto {
+  overscroll-behavior: contain;
+}
+
+.position-fixed .card,
+.position-fixed .modal-content,
+.position-fixed .modal-dialog {
+  border-radius: 0 !important;
+}
+
+.mono-font {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glassmorphic Navbar */
+.app-navbar {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Spreadsheet Table Styling */
+.table-responsive-excel {
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.excel-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.825rem;
+}
+
+.excel-table th {
+  background-color: var(--excel-header-bg);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 8px 10px;
+  text-align: center;
+  border-right: 1px solid #334155;
+  border-bottom: 1px solid #334155;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.excel-table th.sub-header {
+  top: 35px;
+  z-index: 9;
+}
+
+.excel-table td {
+  padding: 4px 6px;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.excel-table tr.category-row td {
+  background-color: var(--excel-category-bg);
+  font-weight: 700;
+  color: #0f172a;
+  padding: 8px 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.excel-table td.auto-calc {
+  background-color: #fef9c3;
+  color: #713f12;
+  font-weight: 600;
+  text-align: right;
+}
+
+.excel-table input.qty-input {
+  width: 54px;
+  text-align: center;
+  padding: 2px 4px;
+  font-size: 0.825rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.excel-table input.qty-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.excel-table input.price-input {
+  width: 80px;
+  text-align: right;
+  padding: 2px 4px;
+  font-size: 0.825rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Fixed left columns for smooth horizontal scrolling */
+.sticky-col-1 {
+  position: sticky;
+  left: 0;
+  background-color: #fff;
+  z-index: 5;
+}
+
+.sticky-col-2 {
+  position: sticky;
+  left: 50px;
+  background-color: #fff;
+  z-index: 5;
+}
+
+.sticky-col-3 {
+  position: sticky;
+  left: 170px;
+  background-color: #fff;
+  z-index: 5;
+}
+
+tr.category-row td.sticky-col-1 {
+  background-color: var(--excel-category-bg);
+}
+
+/* Summary Card */
+.summary-card {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.summary-card .summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.summary-card .summary-row.total-row {
+  background-color: #f8fafc;
+  font-weight: 700;
+  border-bottom: none;
+}
