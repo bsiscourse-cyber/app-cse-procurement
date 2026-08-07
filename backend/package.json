@@ -8,6 +8,7 @@
     "dev": "node --watch server.js",
     "seed": "node db/seed.js",
     "seed:years": "node db/seed_past_years.js",
+    "seed:adjust": "node db/reset_and_seed_years.js",
     "hash": "node hash_password.js"
   },
   "dependencies": {
