@@ -81,35 +81,6 @@ router.put('/profile', authenticateToken, async (req, res) => {
     const userId = req.user.id;
     let { office_name, department, contact_person, position, email, telephone, profile_picture } = req.body;
 
-    // Handle base64 image saving to disk
-    if (profile_picture && profile_picture.startsWith('data:image/')) {
-      try {
-        const matches = profile_picture.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
-        if (matches) {
-          const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
-          const base64Data = matches[2];
-          const fileName = `avatar_${userId}_${Date.now()}.${ext}`;
-          
-          const uploadDir = path.join(__dirname, '../../upload/avatars');
-          const publicUploadDir = path.join(__dirname, '../../frontend/public/upload/avatars');
-          
-          if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-          if (!fs.existsSync(publicUploadDir)) fs.mkdirSync(publicUploadDir, { recursive: true });
-          
-          const filePath = path.join(uploadDir, fileName);
-          const publicFilePath = path.join(publicUploadDir, fileName);
-          
-          const buffer = Buffer.from(base64Data, 'base64');
-          fs.writeFileSync(filePath, buffer);
-          fs.writeFileSync(publicFilePath, buffer);
-          
-          profile_picture = `/upload/avatars/${fileName}`;
-        }
-      } catch (imgErr) {
-        console.error('Failed to save profile picture file:', imgErr);
-      }
-    }
-
     // Validate unique email across all accounts
     if (email && email.trim()) {
       const cleanEmail = email.trim().toLowerCase();
@@ -126,7 +97,6 @@ router.put('/profile', authenticateToken, async (req, res) => {
       email = cleanEmail;
     }
 
-
     await pool.query(
       `UPDATE offices SET
         office_name = COALESCE(NULLIF(?, ''), office_name),
@@ -135,9 +105,9 @@ router.put('/profile', authenticateToken, async (req, res) => {
         position = ?,
         email = ?,
         telephone = ?,
-        profile_picture = COALESCE(?, profile_picture)
+        profile_picture = ?
       WHERE id = ?`,
-      [office_name, department, contact_person, position, email, telephone, profile_picture, userId]
+      [office_name, department, contact_person, position, email, telephone, profile_picture || null, userId]
     );
 
 

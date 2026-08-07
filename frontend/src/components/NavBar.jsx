@@ -522,8 +522,8 @@ const NavBar = () => {
                     fontSize: '0.85rem'
                   }}
                 >
-                  {user.avatar ? (
-                    <img src={user.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {(user.profile_picture || user.avatar) ? (
+                    <img src={user.profile_picture || user.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     user.office_name ? user.office_name.substring(0, 2).toUpperCase() : 'US'
                   )}
