@@ -36,6 +36,15 @@ router.post('/login', async (req, res) => {
       id: matchedOffice.id,
       office_name: matchedOffice.office_name,
       is_admin: Boolean(matchedOffice.is_admin),
+      email: matchedOffice.email
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
+
+    const userProfile = {
+      id: matchedOffice.id,
+      office_name: matchedOffice.office_name,
+      is_admin: Boolean(matchedOffice.is_admin),
       department: matchedOffice.department,
       contact_person: matchedOffice.contact_person,
       position: matchedOffice.position,
@@ -44,11 +53,9 @@ router.post('/login', async (req, res) => {
       profile_picture: matchedOffice.profile_picture
     };
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
-
     res.json({
       token,
-      user: payload
+      user: userProfile
     });
   } catch (error) {
     console.error('Login error:', error);

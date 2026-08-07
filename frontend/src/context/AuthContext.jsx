@@ -3,14 +3,33 @@ import client from '../api/client';
 
 const AuthContext = createContext();
 
+const getValidInitialToken = () => {
+  try {
+    const raw = localStorage.getItem('token') || localStorage.getItem('appcse_token');
+    if (raw && raw.length > 2048) {
+      console.warn('Purging oversized legacy token from localStorage.');
+      localStorage.removeItem('token');
+      localStorage.removeItem('appcse_token');
+      return null;
+    }
+    return raw || null;
+  } catch (e) {
+    return null;
+  }
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || localStorage.getItem('appcse_token') || null);
+  const [token, setToken] = useState(getValidInitialToken);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (token) {
-      fetchCurrentUser();
+      if (token.length > 2048) {
+        logout();
+      } else {
+        fetchCurrentUser();
+      }
     } else {
       setLoading(false);
     }
