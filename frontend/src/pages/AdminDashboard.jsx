@@ -31,7 +31,7 @@ const AdminDashboard = () => {
   const fetchFiscalYears = async () => {
     try {
       const res = await client.get('/admin/fiscal-years');
-      const years = res.data;
+      const years = Array.isArray(res.data) ? res.data.filter(y => y <= currentYear) : [];
       const merged = Array.from(new Set([currentYear, ...years])).sort((a, b) => b - a);
       setFiscalYears(merged);
     } catch (err) {

@@ -43,7 +43,8 @@ const ConsolidatedView = () => {
   const fetchFiscalYears = async () => {
     try {
       const res = await client.get('/admin/fiscal-years');
-      setFiscalYears(Array.from(new Set([currentYear, ...res.data])).sort((a, b) => b - a));
+      const years = Array.isArray(res.data) ? res.data.filter(y => y <= currentYear) : [];
+      setFiscalYears(Array.from(new Set([currentYear, ...years])).sort((a, b) => b - a));
     } catch (e) { console.error(e); }
   };
 
