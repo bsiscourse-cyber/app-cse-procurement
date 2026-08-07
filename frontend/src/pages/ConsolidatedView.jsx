@@ -345,20 +345,11 @@ const ConsolidatedView = () => {
                                     title={`Month: ${monthName} — Qty: ${val}`}
                                     style={{
                                       fontSize: '0.8rem',
-                                      cursor: 'pointer',
-                                      background: val > 0 ? 'rgba(37, 99, 235, 0.04)' : 'transparent'
+                                      color: val > 0 ? '#1d4ed8' : '#cbd5e1',
+                                      cursor: 'pointer'
                                     }}
                                   >
-                                    {val > 0 ? (
-                                      <span
-                                        className="badge bg-primary-subtle text-primary border border-primary-subtle px-1.5 py-1 rounded-2"
-                                        style={{ fontSize: '0.76rem', fontWeight: '700' }}
-                                      >
-                                        {val}
-                                      </span>
-                                    ) : (
-                                      <span style={{ opacity: 0.25 }}>—</span>
-                                    )}
+                                    {val > 0 ? <strong>{val}</strong> : <span style={{ opacity: 0.3 }}>—</span>}
                                   </td>
                                 );
                               })}
