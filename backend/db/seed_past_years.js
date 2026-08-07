@@ -4,14 +4,12 @@ async function seedPastYears() {
   console.log('--- Seeding Historical Procurement Submissions (FY 2025 & FY 2026) ---');
 
   try {
-    // 1. Fetch non-admin offices
     const [offices] = await pool.query('SELECT * FROM offices WHERE is_admin = 0');
     if (offices.length === 0) {
       console.log('No offices found to seed.');
       process.exit(0);
     }
 
-    // 2. Fetch Part I & Part II master items
     const [part1Items] = await pool.query('SELECT * FROM part1_items ORDER BY id ASC LIMIT 25');
     const [part2Items] = await pool.query('SELECT * FROM part2_items ORDER BY id ASC LIMIT 15');
 
@@ -23,7 +21,6 @@ async function seedPastYears() {
       for (let i = 0; i < offices.length; i++) {
         const off = offices[i];
 
-        // Check if submission already exists for this office & year
         const [existing] = await pool.query(
           'SELECT id FROM submissions WHERE office_id = ? AND fiscal_year = ?',
           [off.id, year]
@@ -37,7 +34,6 @@ async function seedPastYears() {
         if (existing.length > 0) {
           submissionId = existing[0].id;
         } else {
-          // Insert submission header
           const [res] = await pool.query(`
             INSERT INTO submissions (
               office_id, fiscal_year, department_bureau, agency_code_uacs,
@@ -65,109 +61,62 @@ async function seedPastYears() {
           totalSubmissionsSeeded++;
         }
 
-        // Generate realistic quantities for Part I items
+        // Prepare bulk entries
+        const entriesRows = [];
         let p1Total = 0;
         for (let k = 0; k < part1Items.length; k++) {
           const item = part1Items[k];
-          // Simple deterministic pseudo-random quantity per office/year/item
           const baseQty = ((off.id * 7 + k * 3 + year) % 15) + 2;
           const unitPrice = parseFloat(item.unit_price) || 150.00;
 
-          const jan = baseQty;
-          const feb = (baseQty + 1) % 10;
-          const mar = baseQty;
-          const apr = (baseQty + 2) % 8;
-          const may = baseQty;
-          const jun = (baseQty + 1) % 12;
-          const jul = baseQty;
-          const aug = (baseQty + 3) % 9;
-          const sep = baseQty;
-          const oct = (baseQty + 2) % 10;
-          const nov = baseQty;
-          const decm = (baseQty + 1) % 7;
+          const jan = baseQty, feb = (baseQty + 1) % 10, mar = baseQty, apr = (baseQty + 2) % 8, may = baseQty, jun = (baseQty + 1) % 12;
+          const jul = baseQty, aug = (baseQty + 3) % 9, sep = baseQty, oct = (baseQty + 2) % 10, nov = baseQty, decm = (baseQty + 1) % 7;
 
           const annualQty = jan + feb + mar + apr + may + jun + jul + aug + sep + oct + nov + decm;
           p1Total += (annualQty * unitPrice);
 
-          await pool.query(`
-            INSERT INTO submission_entries (
-              submission_id, item_id, item_part,
-              jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, decm, unit_price
-            ) VALUES (?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-              jan=VALUES(jan), feb=VALUES(feb), mar=VALUES(mar),
-              apr=VALUES(apr), may=VALUES(may), jun=VALUES(jun),
-              jul=VALUES(jul), aug=VALUES(aug), sep=VALUES(sep),
-              oct=VALUES(oct), nov=VALUES(nov), decm=VALUES(decm),
-              unit_price=VALUES(unit_price)
-          `, [submissionId, item.id, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, decm, unitPrice]);
-          totalEntriesSeeded++;
+          entriesRows.push([submissionId, item.id, 1, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, decm, unitPrice]);
         }
 
-        // Generate realistic quantities for Part II items
         let p2Total = 0;
         for (let k = 0; k < part2Items.length; k++) {
           const item = part2Items[k];
           const baseQty = ((off.id * 5 + k * 4 + year) % 8) + 1;
           const unitPrice = 250.00 + (k * 45);
 
-          const jan = baseQty;
-          const feb = 0;
-          const mar = baseQty;
-          const apr = 0;
-          const may = baseQty;
-          const jun = 0;
-          const jul = baseQty;
-          const aug = 0;
-          const sep = baseQty;
-          const oct = 0;
-          const nov = baseQty;
-          const decm = 0;
+          const jan = baseQty, feb = 0, mar = baseQty, apr = 0, may = baseQty, jun = 0;
+          const jul = baseQty, aug = 0, sep = baseQty, oct = 0, nov = baseQty, decm = 0;
 
           const annualQty = jan + feb + mar + apr + may + jun + jul + aug + sep + oct + nov + decm;
           p2Total += (annualQty * unitPrice);
 
+          entriesRows.push([submissionId, item.id, 2, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, decm, unitPrice]);
+        }
+
+        if (entriesRows.length > 0) {
           await pool.query(`
             INSERT INTO submission_entries (
               submission_id, item_id, item_part,
               jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, decm, unit_price
-            ) VALUES (?, ?, 2, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES ?
             ON DUPLICATE KEY UPDATE
               jan=VALUES(jan), feb=VALUES(feb), mar=VALUES(mar),
               apr=VALUES(apr), may=VALUES(may), jun=VALUES(jun),
               jul=VALUES(jul), aug=VALUES(aug), sep=VALUES(sep),
               oct=VALUES(oct), nov=VALUES(nov), decm=VALUES(decm),
               unit_price=VALUES(unit_price)
-          `, [submissionId, item.id, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, decm, unitPrice]);
-          totalEntriesSeeded++;
+          `, [entriesRows]);
+          totalEntriesSeeded += entriesRows.length;
         }
 
-        // Calculate 10% provision and 10% freight
-        const p1Prov = p1Total * 0.10;
-        const p1Freight = p1Total * 0.10;
-        const p1Grand = p1Total + p1Prov + p1Freight;
-
-        const p2Prov = p2Total * 0.10;
-        const p2Freight = p2Total * 0.10;
-        const p2Grand = p2Total + p2Prov + p2Freight;
-
+        const p1Prov = p1Total * 0.10, p1Freight = p1Total * 0.10, p1Grand = p1Total + p1Prov + p1Freight;
+        const p2Prov = p2Total * 0.10, p2Freight = p2Total * 0.10, p2Grand = p2Total + p2Prov + p2Freight;
         const overallGrand = p1Grand + p2Grand;
 
-        // Update submission calculated totals
         await pool.query(`
           UPDATE submissions SET
-            part1_total_a = ?,
-            part1_provision_b = ?,
-            part1_freight_c = ?,
-            part1_grand_total_d = ?,
-            part1_budget_text_e = ?,
-            
-            part2_total_a = ?,
-            part2_provision_b = ?,
-            part2_freight_c = ?,
-            part2_grand_total_d = ?,
-            part2_budget_text_e = ?,
-            
+            part1_total_a = ?, part1_provision_b = ?, part1_freight_c = ?, part1_grand_total_d = ?, part1_budget_text_e = ?,
+            part2_total_a = ?, part2_provision_b = ?, part2_freight_c = ?, part2_grand_total_d = ?, part2_budget_text_e = ?,
             overall_grand_total = ?
           WHERE id = ?
         `, [
