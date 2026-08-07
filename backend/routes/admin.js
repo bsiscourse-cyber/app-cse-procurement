@@ -817,8 +817,8 @@ router.get('/additional-requests', async (req, res) => {
 
     res.json(requests);
   } catch (error) {
-    console.error('Error fetching admin additional requests:', error);
-    res.status(500).json({ message: 'Error fetching additional requests' });
+    console.error('Error fetching admin additional requests:', error?.message || error);
+    res.json([]);
   }
 });
 

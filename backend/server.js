@@ -57,6 +57,47 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal Server Error', error: err.message });
 });
 
+const ensureTables = async () => {
+  try {
+    const pool = require('./db/pool');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS additional_requests (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        submission_id INT NOT NULL,
+        office_id INT NOT NULL,
+        office_name VARCHAR(255) NOT NULL,
+        reason_notes TEXT,
+        status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+        feedback_notes TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (office_id) REFERENCES offices(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB;
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS additional_request_items (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        request_id INT NOT NULL,
+        item_id INT NOT NULL,
+        item_part INT NOT NULL,
+        jan INT DEFAULT 0, feb INT DEFAULT 0, mar INT DEFAULT 0,
+        apr INT DEFAULT 0, may INT DEFAULT 0, jun INT DEFAULT 0,
+        jul INT DEFAULT 0, aug INT DEFAULT 0, sep INT DEFAULT 0,
+        oct INT DEFAULT 0, nov INT DEFAULT 0, decm INT DEFAULT 0,
+        unit_price DECIMAL(12,2) DEFAULT 0.00,
+        total_qty INT DEFAULT 0,
+        total_amount DECIMAL(14,2) DEFAULT 0.00,
+        FOREIGN KEY (request_id) REFERENCES additional_requests(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB;
+    `);
+    console.log('✅ Database schema verified (additional_requests tables ready)');
+  } catch (err) {
+    console.error('⚠️ Warning checking additional_requests tables:', err.message);
+  }
+};
+ensureTables();
+
 app.listen(PORT, () => {
   console.log(`🚀 APP-CSE 2027 Backend Server listening on http://localhost:${PORT}`);
 });

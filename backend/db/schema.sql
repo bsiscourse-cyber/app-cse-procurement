@@ -149,3 +149,34 @@ CREATE TABLE IF NOT EXISTS notifications (
   FOREIGN KEY (office_id) REFERENCES offices(id) ON DELETE CASCADE
 );
 
+-- Additional Requests Header
+CREATE TABLE IF NOT EXISTS additional_requests (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  submission_id INT NOT NULL,
+  office_id INT NOT NULL,
+  office_name VARCHAR(255) NOT NULL,
+  reason_notes TEXT,
+  status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+  feedback_notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (office_id) REFERENCES offices(id) ON DELETE CASCADE
+);
+
+-- Additional Request Items
+CREATE TABLE IF NOT EXISTS additional_request_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  request_id INT NOT NULL,
+  item_id INT NOT NULL,
+  item_part INT NOT NULL,
+  jan INT DEFAULT 0, feb INT DEFAULT 0, mar INT DEFAULT 0,
+  apr INT DEFAULT 0, may INT DEFAULT 0, jun INT DEFAULT 0,
+  jul INT DEFAULT 0, aug INT DEFAULT 0, sep INT DEFAULT 0,
+  oct INT DEFAULT 0, nov INT DEFAULT 0, decm INT DEFAULT 0,
+  unit_price DECIMAL(12,2) DEFAULT 0.00,
+  total_qty INT DEFAULT 0,
+  total_amount DECIMAL(14,2) DEFAULT 0.00,
+  FOREIGN KEY (request_id) REFERENCES additional_requests(id) ON DELETE CASCADE
+);
+
+
