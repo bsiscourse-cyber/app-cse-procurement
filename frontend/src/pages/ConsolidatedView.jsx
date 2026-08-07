@@ -342,7 +342,7 @@ const ConsolidatedView = () => {
                                   <td
                                     key={m}
                                     className="px-1 text-center align-middle"
-                                    title={`Month: ${monthName} — Qty: ${val}`}
+                                    title={monthName}
                                     style={{
                                       fontSize: '0.8rem',
                                       color: val > 0 ? '#1d4ed8' : '#cbd5e1',
